@@ -1,6 +1,7 @@
 package jp.co.sss.lms.ct.f01_login1;
 
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,6 +37,28 @@ public class Case01 {
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
 		// TODO ここに追加
+
+		// ケース01 - No.01 トップページにアクセス
+		goTo("http://localhost:8080/lms/");
+
+		// ケース01 - No.02 画面タイトル確認
+		assertEquals("ログイン | LMS", webDriver.getTitle(),
+				"ログイン画面が正しく表示されていることを確認する。");
+
+		// ケース01 - No.03 ログインフォームの要素を確認
+		assertTrue(isElementPresentById("loginId"),
+				"ログインID入力欄が表示されていることを確認する。");
+		assertTrue(isElementPresentById("password"),
+				"パスワード入力欄が表示されていることを確認する。");
+		assertTrue(isElementPresentByCssSelector("input[type='submit']"),
+				"ログインボタンが表示されていることを確認する。");
+
+		// ケース01 - No.04 HTTPエラー（404,500など）が発生していないことを確認する。
+
+		// エビデンスを取得
+		getEvidence(new Object() {
+		}, "ケース01_ログイン画面への遷移");
+
 	}
 
 }
