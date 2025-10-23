@@ -158,4 +158,59 @@ public class WebDriverUtils {
 		}
 	}
 
+	/**
+	 * 10/23 現在のURLが指定したパスと一致するか確認
+	 * 
+	 * @param expectedPath 期待される末尾
+	 * @return 一致していればtrue、しなければfalse
+	 * @author 河島
+	 */
+	public static boolean isUrlEndsWith(String expectedPath) {
+		String currentUrl = webDriver.getCurrentUrl();
+		System.out.println("◎現在のURL : " + currentUrl);
+		return currentUrl.endsWith(expectedPath);
+	}
+
+	/**
+	 * 10/23 現在のページタイトルが指定したものと一致するか確認
+	 * 
+	 * @param expectedTitle 期待するタイトル
+	 * @return 一致していればtrue、しなければfalse
+	 * @author 河島
+	 */
+	public static boolean isTitle(String expectedTitle) {
+		String actualTitle = webDriver.getTitle();
+		System.out.println("◎現在のタイトル : " + actualTitle);
+		return actualTitle.equals(expectedTitle);
+	}
+
+	/**
+	 * 10/23 別タブに切り替える
+	 * 
+	 * @return 別タブのウィンドウハンドル
+	 * @author 河島
+	 */
+	public static String switchToNewWindow() {
+		String currentWindow = webDriver.getWindowHandle();
+		for (String handle : webDriver.getWindowHandles()) {
+			if (!handle.equals(currentWindow)) {
+				webDriver.switchTo().window(handle);
+				return handle;
+			}
+		}
+		return currentWindow;
+
+	}
+
+	/**
+	 * 10/23 別タブを閉じて元のウィンドウに戻る
+	 * 
+	 * @param originalWindow　元のウィンドウハンドル
+	 * @author 河島
+	 */
+	public static void closeAndReturnWindow(String originalWindow) {
+		webDriver.close();
+		webDriver.switchTo().window(originalWindow);
+	}
+
 }

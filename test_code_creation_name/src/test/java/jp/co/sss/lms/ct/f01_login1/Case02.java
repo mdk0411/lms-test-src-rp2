@@ -65,7 +65,7 @@ public class Case02 {
 	void test02() {
 		// TODO ここに追加
 
-		// ケース02 - No.03 DBに登録されていないユーザを入力し、「ログイン」ボタンを押下する。
+		// ケース02 - No.03 DBに登録されていないユーザを入力し、「ログイン」ボタン押下。
 		webDriver.findElement(By.id("loginId")).sendKeys("NotStudentAA01");
 		webDriver.findElement(By.id("password")).sendKeys("StudentAA011");
 		webDriver.findElement(By.cssSelector("input[type='submit']")).click();
