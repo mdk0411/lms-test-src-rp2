@@ -350,7 +350,7 @@ public class WebDriverUtils {
 	}
 
 	/**
-	 * ⑨10/24 指定したタイトルになるまで待機
+	 * ⑬10/24 指定したタイトルになるまで待機
 	 * 
 	 * @param expectedTitle 期待するタイトル
 	 * @param second 最大待機秒数
