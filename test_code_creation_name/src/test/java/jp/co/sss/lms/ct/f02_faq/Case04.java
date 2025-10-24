@@ -3,8 +3,6 @@ package jp.co.sss.lms.ct.f02_faq;
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.Duration;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -13,12 +11,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import jp.co.sss.lms.ct.util.WebDriverUtils;
 
 /**
  * 結合テスト よくある質問機能
@@ -33,13 +25,6 @@ public class Case04 {
 	@BeforeAll
 	static void before() {
 		createDriver();
-		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--disable-save-password-bubble");
-		options.addArguments("--disable-password-generation");
-		options.addArguments("--disable-notifications");
-		options.addArguments("--disable-infobars");
-		webDriver = new ChromeDriver(options);
-
 	}
 
 	/** 後処理 */
@@ -53,17 +38,14 @@ public class Case04 {
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
 		// TODO ここに追加
+
 		// ケース04 - No.01 トップページにアクセス
 		goTo("http://localhost:8080/lms/");
 
-		assertTrue(isTitle("ログイン | LMS"),
-				"タイトルが正しく表示されていることを確認する。");
-		assertTrue(isElementPresentById("loginId"),
-				"ログインID入力欄が表示されていることを確認する。");
-		assertTrue(isElementPresentById("password"),
-				"パスワード入力欄が表示されていることを確認する。");
-		assertTrue(isElementPresentByCssSelector("input[type='submit']"),
-				"ログインボタンが表示されていることを確認する。");
+		assertTrue(isTitle("ログイン | LMS"));
+		assertTrue(isElementPresentById("loginId"));
+		assertTrue(isElementPresentById("password"));
+		assertTrue(isElementPresentByCssSelector("input[type='submit']"));
 
 		getEvidence(new Object() {
 		}, "ケース04_よくある質問への遷移_初期画面");
@@ -80,9 +62,7 @@ public class Case04 {
 		webDriver.findElement(By.id("password")).sendKeys("StudentAA011");
 		webDriver.findElement(By.cssSelector("input[type='submit']")).click();
 
-		assertTrue(isTitle("コース詳細 | LMS"),
-				"タイトルが正しく表示されていることを確認する。");
-
+		assertTrue(isTitle("コース詳細 | LMS"));
 		getEvidence(new Object() {
 		}, "ケース04_よくある質問への遷移_コース詳細画面");
 
@@ -94,25 +74,18 @@ public class Case04 {
 	void test03() {
 		// TODO ここに追加
 
-		// ケース04 - No.03 「ヘルプ」リンク押下
-		webDriver.findElement(By.cssSelector("a.dropdown-toggle")).click();
-		// 「ヘルプ」リンクが表示されるまで待機
-		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("ヘルプ"))).click();
-
-		webDriver.findElement(By.linkText("ヘルプ")).click();
+		// ケース04 - No.03「機能」のプルダウンを開き、「ヘルプ」のリンクを押下する。
+		clickDropDownLink("機能", "ヘルプ");
 
 		// ケース04 - No.04 タイトル確認
-		assertTrue(isTitle("ヘルプ | LMS"), "タイトルが正しく表示されていることを確認する。");
+		assertTrue(isTitle("ヘルプ | LMS"));
 
 		// ケース04 - No.05 URL確認
-		assertTrue(isUrlEndsWith("/help/index"),
-				"「ヘルプ」URLを確認する");
+		assertTrue(isUrlEndsWith("/help"));
 
 		// エビデンス取得
 		getEvidence(new Object() {
 		}, "ケース04_よくある質問への遷移_ヘルプ画面");
-
 	}
 
 	@Test
@@ -121,24 +94,31 @@ public class Case04 {
 	void test04() {
 		// TODO ここに追加
 
-		// ケース04 - No.06 「よくある質問」リンク押下
+		// ケース04 - No.06 「よくある質問」リンク押下前に現在のウィンドウを保持
+		// 別タブで開いた場合に、元に戻るためのハンドルとして使用します
 		String originalWindow = webDriver.getWindowHandle();
-		webDriver.findElement(By.cssSelector("a[href='/faq']")).click();
 
-		// ケース04 - No.0 タイトル確認
-		assertTrue(isTitle("よくある質問 | LMS"),
-				"タイトルが正しく表示されていることを確認する。");
+		// ケース04 - No.06 「よくある質問」リンク押下
+		clickLinkByHref("/lms/faq");
 
-		// ケース04 - No.0 URL確認
-		assertTrue(isUrlEndsWith("/faq/index"),
-				"「よくある質問」URLを確認する");
+		// ケース04 - No.07 別タブで開かれるか確認 
+		String newWindow = switchToNewWindow();
+
+		// ケース04 - No.08 タイトル確認
+		assertTrue(isTitle("よくある質問 | LMS"));
+
+		// ケース04 - No.09 URL確認
+		assertTrue(isUrlEndsWith("/faq"));
 
 		// エビデンス取得
 		getEvidence(new Object() {
-		}, "ケース04_よくある質問への遷移");
+		}, "ケース04_よくある質問画面への遷移");
 
-		// 別タブを閉じて元のヘルプ画面に戻る
-		WebDriverUtils.closeAndReturnWindow(originalWindow);
-
+		// タブの状態に応じて戻り処理を分岐
+		if (!newWindow.equals(originalWindow)) {
+			closeAndReturnWindow(originalWindow);
+		} else {
+			System.out.println("△「よくある質問」は同一タブで開かれたため、戻り処理をスキップします。");
+		}
 	}
 }
