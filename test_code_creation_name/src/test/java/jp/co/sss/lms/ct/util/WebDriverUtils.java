@@ -300,4 +300,66 @@ public class WebDriverUtils {
 
 		System.out.println("◎リンク「" + href + "」をクリックしました。");
 	}
+
+	/**
+	 * ⑨10/24 指定した要素にテキストを入力（待機付き）
+	 * @param locator 要素の特定子
+	 * @param text 入力文字列
+	 * @param seconds 最大待機秒数
+	 * @author 河島
+	 */
+	public static void typeText(By locator, String text, int seconds) {
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(seconds));
+		WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+		element.clear();
+		element.sendKeys(text);
+		System.out.println("◎入力欄に「" + text + "」を入力しました。");
+	}
+
+	/**
+	 * ⑩10/24 指定した要素をクリック（待機付き）
+	 * @param locator 要素の特定子
+	 * @param seconds 最大待機秒数
+	 * @author 河島
+	 */
+	public static void clickElement(By locator, int seconds) {
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(seconds));
+		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+		element.click();
+		System.out.println("◎要素をクリックしました: " + locator.toString());
+	}
+
+	/**
+	 * ⑪10/24 入力欄の値を取得
+	 * @param locator 要素の特定子
+	 * @return 入力欄の文字列
+	 * @author 河島
+	 */
+	public static String getInputValue(By locator) {
+		return webDriver.findElement(locator).getAttribute("value");
+	}
+
+	/**
+	 * ⑫10/24 ページ全体に指定文字が含まれるか確認
+	 * @param text 検索する文字列
+	 * @return 含まれていいればtrue
+	 * @author 河島
+	 */
+	public static boolean isTextPresent(String text) {
+		return webDriver.getPageSource().contains(text);
+	}
+
+	/**
+	 * ⑨10/24 指定したタイトルになるまで待機
+	 * 
+	 * @param expectedTitle 期待するタイトル
+	 * @param second 最大待機秒数
+	 * @author 河島
+	 */
+	public static void waitForTitle(String expectedTitle, int second) {
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(second));
+		wait.until(ExpectedConditions.titleIs(expectedTitle));
+		System.out.println("◎タイトルが「" + expectedTitle + "」になりました。");
+	}
+
 }
