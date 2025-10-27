@@ -1,6 +1,7 @@
 package jp.co.sss.lms.ct.f03_report;
 
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.openqa.selenium.By;
 
 /**
  * 結合テスト レポート機能
@@ -36,6 +38,17 @@ public class Case07 {
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
 		// TODO ここに追加
+
+		// ケース07 - No.01 トップページにアクセス
+		goTo("http://localhost:8080/lms/");
+		assertTrue(isTitle("ログイン | LMS"));
+		assertTrue(isElementPresentById("loginId"));
+		assertTrue(isElementPresentById("password"));
+		assertTrue(isElementPresentByCssSelector("input[type='submit']"));
+
+		// エビデンス取得
+		getEvidence(new Object() {
+		}, "ケース07_受講生レポート新規登録(日報)_正常系_初期画面");
 	}
 
 	@Test
@@ -43,6 +56,16 @@ public class Case07 {
 	@DisplayName("テスト02 初回ログイン済みの受講生ユーザーでログイン")
 	void test02() {
 		// TODO ここに追加
+
+		// ケース07 - No.02 ログイン
+		typeText(By.id("loginId"), "StudentAA01", 5);
+		typeText(By.id("password"), "StudentAA011", 5);
+		clickElement(By.cssSelector("input[type='submit']"), 5);
+		assertTrue(isTitle("コース詳細 | LMS"));
+
+		// エビデンス取得
+		getEvidence(new Object() {
+		}, "ケース07_受講生レポート新規登録(日報)_正常系_コース詳細画面");
 	}
 
 	@Test
@@ -50,6 +73,21 @@ public class Case07 {
 	@DisplayName("テスト03 未提出の研修日の「詳細」ボタンを押下しセクション詳細画面に遷移")
 	void test03() {
 		// TODO ここに追加
+
+		waitForTitle("コース詳細 | LMS", 5);
+
+		// ケース07 - No.03 「未提出」ステータスの「詳細」ボタンをクリック
+		clickDetail("未提出");
+
+		// ケース07 - No.04 タイトル確認
+		assertTrue(isTitle("セクション詳細 | LMS"));
+
+		// ケース07 - No.05 URL確認
+		assertTrue(isUrlEndsWith("/section/detail"));
+
+		// エビデンス取得
+		getEvidence(new Object() {
+		}, "ケース07_受講生レポート新規登録(日報)_正常系_セクション詳細画面");
 	}
 
 	@Test
@@ -57,6 +95,17 @@ public class Case07 {
 	@DisplayName("テスト04 「提出する」ボタンを押下しレポート登録画面に遷移")
 	void test04() {
 		// TODO ここに追加
+
+		// 「提出する」ボタン押下
+		goToReport();
+
+		// タイトルとURL確認
+		assertTrue(isTitle("レポート登録 | LMS"));
+		assertTrue(isUrlEndsWith("/report/regist"));
+
+		// エビデンス取得
+		getEvidence(new Object() {
+		}, "ケース07_受講生レポート新規登録(日報)_正常系_レポート登録画面");
 	}
 
 	@Test
@@ -64,6 +113,22 @@ public class Case07 {
 	@DisplayName("テスト05 報告内容を入力して「提出する」ボタンを押下し確認ボタン名が更新される")
 	void test05() {
 		// TODO ここに追加
-	}
+		typeTextJs(By.id("content_0"), "今日はできました。", 10);
 
+		clickElement(By.cssSelector("button.btn.btn-primary"), 10);
+
+		// エビデンス取得
+		getEvidence(new Object() {
+		}, "ケース07_受講生レポート新規登録(日報)_正常系_「今日はできました。」入力確認画面");
+
+		// タイトルとURL確認
+		clickElement(By.cssSelector("button.btn.btn-primary"), 10);
+		waitForTitle("レポート登録 | LMS", 5);
+
+		assertTrue(isTextPresent("提出済み日報【デモ】を確認する"));
+
+		// エビデンス取得
+		getEvidence(new Object() {
+		}, "ケース07_受講生レポート新規登録(日報)_正常系_提出済み日報【デモ】を確認する");
+	}
 }

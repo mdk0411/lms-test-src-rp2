@@ -362,4 +362,92 @@ public class WebDriverUtils {
 		System.out.println("◎タイトルが「" + expectedTitle + "」になりました。");
 	}
 
+	/**
+	 * ⑭ 「未提出」などのステータスを含む行の「詳細」ボタンをクリック
+	 * @param keyword 例：「未提出」
+	 * @author 河島
+	 */
+	public static void clickDetail(String keyword) {
+		try {
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+
+			// 「すべて開く」ボタンが存在する場合はクリック
+			if (isElementPresentById("open-all-panel")) {
+				WebElement openAll = webDriver.findElement(By.id("open-all-panel"));
+				((JavascriptExecutor) webDriver).executeScript("arguments[0].click();", openAll);
+				Thread.sleep(500);
+			}
+
+			// 「未提出」等のステータスを持つ行を特定
+			WebElement targetRow = wait.until(ExpectedConditions.presenceOfElementLocated(
+					By.xpath("//span[text()='" + keyword + "']/ancestor::tr")));
+
+			// 該当行の「詳細」ボタンを取得しクリック
+			WebElement detailButton = targetRow.findElement(By.xpath(".//input[contains(@value,'詳細')]"));
+			((JavascriptExecutor) webDriver).executeScript(
+					"arguments[0].scrollIntoView({block:'center'}); arguments[0].click();", detailButton);
+
+			System.out.println("◎「" + keyword + "」の詳細ボタンをクリックしました。");
+		} catch (Exception e) {
+			System.err.println("×「" + keyword + "」の詳細ボタンクリックに失敗しました: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * ⑮ 「提出する」ボタン押下 → レポート登録画面に遷移
+	 * @author 河島
+	 */
+	public static void goToReport() {
+		try {
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+
+			// 「日報【デモ】を提出する」ボタンをクリック（部分一致対応）
+			WebElement submitBtn = wait.until(ExpectedConditions.elementToBeClickable(
+					By.xpath("//input[contains(@value,'提出')]")));
+			((JavascriptExecutor) webDriver).executeScript("arguments[0].click();", submitBtn);
+
+			// 遷移確認
+			wait.until(ExpectedConditions.or(
+					ExpectedConditions.titleIs("レポート登録 | LMS"),
+					ExpectedConditions.urlContains("/report/regist")));
+
+			System.out.println("◎レポート登録画面に遷移しました。");
+		} catch (Exception e) {
+			System.err.println("×レポート登録画面への遷移に失敗しました: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * ⑰ JSを使ってテキストを上書き入力
+	 * 
+	 * @param locator 入力対象の要素（例：By.id("content_0")）
+	 * @param text 入力する文字列
+	 * @param seconds 最大待機秒数
+	 * @author 河島
+	 */
+	public static void typeTextJs(By locator, String text, int seconds) {
+		try {
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(seconds));
+
+			// 対象要素を取得して中央へスクロール
+			WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+			((JavascriptExecutor) webDriver)
+					.executeScript("arguments[0].scrollIntoView({block:'center'});", element);
+
+			// JSで値を上書きして、input/changeイベントを発火
+			String js = """
+						const el = arguments[0];
+						el.value = arguments[1];
+						el.dispatchEvent(new Event('input', { bubbles: true }));
+						el.dispatchEvent(new Event('change', { bubbles: true }));
+					""";
+			((JavascriptExecutor) webDriver).executeScript(js, element, text);
+
+			System.out.println("◎入力欄にJSで「" + text + "」を入力しました。");
+			Thread.sleep(500);
+
+		} catch (Exception e) {
+			System.err.println("×テキスト入力に失敗しました: " + e.getMessage());
+		}
+	}
 }
