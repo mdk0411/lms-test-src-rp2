@@ -134,7 +134,10 @@ public class WebDriverUtils {
 		}
 	}
 
-	// 以下、①～⑧は河島が追加した機能
+	/*--------------------------------------------------------------------------
+	 * 以下からは河島が追加した機能です。
+	 *-------------------------------------------------------------------------*/
+
 	/**
 	 * ①10/22 指定したIDの要素が存在するか確認
 	 * 
@@ -450,4 +453,32 @@ public class WebDriverUtils {
 			System.err.println("×テキスト入力に失敗しました: " + e.getMessage());
 		}
 	}
+
+	/**
+	 * ⑱指定した文字列を含むURLになるまで待機
+	 * 
+	 * @param url 含まれるURL部分
+	 * @param seconds タイムアウト秒数
+	 */
+	public static void waitForUrlContaints(String url, int seconds) {
+		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(seconds));
+		wait.until(ExpectedConditions.urlContains(url));
+
+	}
+
+	/**
+	 * ⑲10/28 JSでクリックを強制実行する
+	 * @param locator 要素の特定子
+	 * @author 河島
+	 */
+	public static void clickJs(By locator) {
+		try {
+			WebElement element = webDriver.findElement(locator);
+			((JavascriptExecutor) webDriver).executeScript("arguments[0].click();", element);
+			System.out.println("◎JSでクリックしました: " + locator.toString());
+		} catch (Exception e) {
+			System.err.println("×JSクリックに失敗しました: " + e.getMessage());
+		}
+	}
+
 }

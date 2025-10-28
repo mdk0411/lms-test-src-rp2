@@ -96,11 +96,13 @@ public class Case07 {
 	void test04() {
 		// TODO ここに追加
 
-		// 「提出する」ボタン押下
+		// ケース07 - No.06 「日報を提出する」ボタン押下
 		goToReport();
 
-		// タイトルとURL確認
+		// ケース07 - No.07 タイトル確認
 		assertTrue(isTitle("レポート登録 | LMS"));
+
+		// ケース07 - No.08 URL確認
 		assertTrue(isUrlEndsWith("/report/regist"));
 
 		// エビデンス取得
@@ -113,17 +115,22 @@ public class Case07 {
 	@DisplayName("テスト05 報告内容を入力して「提出する」ボタンを押下し確認ボタン名が更新される")
 	void test05() {
 		// TODO ここに追加
+
+		// ケース07 - No.09 報告内容を入力
 		typeTextJs(By.id("content_0"), "今日はできました。", 10);
 
-		clickElement(By.cssSelector("button.btn.btn-primary"), 10);
-
-		// エビデンス取得
+		// 入力内容のエビデンス取得
 		getEvidence(new Object() {
 		}, "ケース07_受講生レポート新規登録(日報)_正常系_「今日はできました。」入力確認画面");
 
-		// タイトルとURL確認
-		clickElement(By.cssSelector("button.btn.btn-primary"), 10);
-		waitForTitle("レポート登録 | LMS", 5);
+		// ケース07 - No.09 報告内容を入力して「提出する」ボタンを押下する。
+		clickJs(By.cssSelector("button.btn.btn-primary"));
+
+		// ケース07 - No.10 タイトル確認
+		waitForTitle("セクション詳細 | LMS", 10);
+
+		// ケース07 - No.10 URL確認
+		waitForUrlContaints("/section/detail", 10);
 
 		assertTrue(isTextPresent("提出済み日報【デモ】を確認する"));
 

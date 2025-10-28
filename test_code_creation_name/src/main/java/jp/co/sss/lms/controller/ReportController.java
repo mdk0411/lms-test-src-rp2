@@ -59,12 +59,15 @@ public class ReportController {
 	 * @throws ParseException
 	 */
 	@RequestMapping(path = "/complete", method = RequestMethod.POST)
-	public String complete(DailyReportSubmitForm dailyReportSubmitForm, BindingResult result)
+	public String complete(
+			@Validated @ModelAttribute DailyReportSubmitForm dailyReportSubmitForm,
+			BindingResult result, Model model)
 			throws ParseException {
 
 		// Task.20 ①入力チェックを実装する
 		reportService.reportSubmitInputCheck(dailyReportSubmitForm, result);
 		if (result.hasErrors()) {
+			model.addAttribute("dailyReportSubmitForm", dailyReportSubmitForm);
 			return "report/regist";
 		}
 
