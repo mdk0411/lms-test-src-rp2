@@ -41,6 +41,7 @@ public class Case07 {
 
 		// ケース07 - No.01 トップページにアクセス
 		goTo("http://localhost:8080/lms/");
+
 		assertTrue(isTitle("ログイン | LMS"));
 		assertTrue(isElementPresentById("loginId"));
 		assertTrue(isElementPresentById("password"));
@@ -58,9 +59,8 @@ public class Case07 {
 		// TODO ここに追加
 
 		// ケース07 - No.02 ログイン
-		typeText(By.id("loginId"), "StudentAA01", 5);
-		typeText(By.id("password"), "StudentAA011", 5);
-		clickElement(By.cssSelector("input[type='submit']"), 5);
+		login("StudentAA01", "StudentAA011");
+
 		assertTrue(isTitle("コース詳細 | LMS"));
 
 		// エビデンス取得

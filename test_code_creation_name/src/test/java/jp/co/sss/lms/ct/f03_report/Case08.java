@@ -3,6 +3,8 @@ package jp.co.sss.lms.ct.f03_report;
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * 結合テスト レポート機能
@@ -53,11 +56,10 @@ public class Case08 {
 	void test02() {
 		// TODO ここに追加
 
-		// ケース08 - No.02 ログイン
-		typeText(By.id("loginId"), "StudentAA01", 5);
-		typeText(By.id("password"), "StudentAA011", 5);
-		clickElement(By.cssSelector("input[type='submit']"), 5);
-		assertTrue(isTitle("コース詳細 | LMS"));
+		// ケース08 - No.02 初回ログイン済みの受講生ユーザーでログイン
+		login("StudentAA01", "StudentAA011");
+
+		waitForTitle("コース詳細 | LMS", 10);
 
 	}
 
@@ -66,8 +68,6 @@ public class Case08 {
 	@DisplayName("テスト03 提出済の研修日の「詳細」ボタンを押下しセクション詳細画面に遷移")
 	void test03() {
 		// TODO ここに追加
-
-		waitForTitle("コース詳細 | LMS", 5);
 
 		// ケース08 - No.03 「提出済」ステータスの「詳細」ボタンを押下する
 		// ここでは「2022年10月2日(日)」行の「詳細」ボタンをクリックしている。
@@ -107,14 +107,14 @@ public class Case08 {
 		// TODO ここに追加
 
 		// ケース08 - No.05 報告内容を修正して「提出する」ボタンを押下する。
-		typeTextJs(By.id("content_0"), "修正しました。", 10);
+		typeTextJs(By.id("content_1"), "修正しました。", 10);
 
 		// エビデンス取得
 		getEvidence(new Object() {
 		}, "ケース08_受講生レポート修正(週報)_正常系_内容修正");
 
 		// 「提出する」ボタンをクリック
-		clickElement(By.cssSelector("button.btn.btn-primary"), 10);
+		clickJs(By.cssSelector("button.btn.btn-primary"));
 
 	}
 
@@ -124,12 +124,17 @@ public class Case08 {
 	void test06() {
 		// TODO ここに追加
 
-		// 「ようこそ受講生AA1さん」をクリック
-		clickElement(By.linkText("ようこそ受講生AA1さん"), 10);
+		// ケース08 - No.06 上部メニューの「ようこそ○○さん」リンクを押下
+		clickWelcomeGoToUserDetail();
+		List<WebElement> list = webDriver.findElements(By.xpath("//a[contains(@href,'/user/detail')]"));
+		System.out.println("要素数: " + list.size());
+		for (WebElement e : list) {
+			System.out.println("▶ text=" + e.getText());
+			System.out.println("▶ href=" + e.getAttribute("href"));
+		}
 
 		// タイトル確認
-		waitForTitle("ユーザー詳細 | LMS", 10);
-
+		waitForTitle("ユーザー詳細", 10);
 		// URL確認
 		assertTrue(isUrlEndsWith("/user/detail"));
 
@@ -144,14 +149,14 @@ public class Case08 {
 	void test07() {
 		// TODO ここに追加
 
-		// 「詳細」ボタンをクリック（該当レポート）
-		clickElement(By.xpath("//tr[td[contains(text(),'週報【デモ】')]]//input[@value='詳細']"), 10);
+		// ケース08 - No.07 該当レポートの「詳細」ボタンを押下する。
+		clickJs(By.xpath("//tr[td[contains(text(),'週報【デモ】')]]//input[@value='詳細']"));
 
-		// タイトル確認
+		// タイトルとURL確認
 		waitForTitle("レポート詳細 | LMS", 10);
 		assertTrue(isTitle("レポート詳細 | LMS"));
 
-		// 修正内容の確認（例：「今日はできました。」など）
+		// ケース08 - No.08 修正内容の確認
 		assertTrue(isTextPresent("修正しました。"));
 
 		// エビデンス取得

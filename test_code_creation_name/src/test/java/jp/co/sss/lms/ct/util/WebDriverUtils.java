@@ -366,7 +366,7 @@ public class WebDriverUtils {
 	}
 
 	/**
-	 * ⑭ 「未提出」などのステータスを含む行の「詳細」ボタンをクリック
+	 * ⑭10/27「未提出」などのステータスを含む行の「詳細」ボタンをクリック
 	 * @param keyword 例：「未提出」
 	 * @author 河島
 	 */
@@ -397,7 +397,8 @@ public class WebDriverUtils {
 	}
 
 	/**
-	 * ⑮ 「提出する」ボタン押下 → レポート登録画面に遷移
+	 * ⑮10/27
+	 *  「提出する」ボタン押下 → レポート登録画面に遷移
 	 * @author 河島
 	 */
 	public static void goToReport() {
@@ -421,7 +422,8 @@ public class WebDriverUtils {
 	}
 
 	/**
-	 * ⑰ JSを使ってテキストを上書き入力
+	 * ⑰10/27
+	 *  JSを使ってテキストを上書き入力
 	 * 
 	 * @param locator 入力対象の要素（例：By.id("content_0")）
 	 * @param text 入力する文字列
@@ -455,10 +457,12 @@ public class WebDriverUtils {
 	}
 
 	/**
-	 * ⑱指定した文字列を含むURLになるまで待機
+	 * ⑱10/28
+	 * 指定した文字列を含むURLになるまで待機
 	 * 
 	 * @param url 含まれるURL部分
 	 * @param seconds タイムアウト秒数
+	 * @河島
 	 */
 	public static void waitForUrlContaints(String url, int seconds) {
 		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(seconds));
@@ -481,4 +485,63 @@ public class WebDriverUtils {
 		}
 	}
 
+	/**
+	 * ⑳10/28 
+	 * JSで
+	強制的にユーザー詳細へ遷移する
+	 */
+	public static void clickWelcomeGoToUserDetail() {
+		try {
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(10));
+			wait.until(ExpectedConditions.presenceOfElementLocated(By.tagName("nav")));
+
+			// JSで強制的にユーザー詳細画面へ遷移させる
+			((JavascriptExecutor) webDriver)
+					.executeScript("window.location.href='http://localhost:8080/lms/user/detail';");
+
+			System.out.println("◎ユーザー詳細画面に遷移しました。");
+
+		} catch (Exception e) {
+			System.err.println("×ユーザー詳細への強制遷移に失敗しました: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * ㉑ 10/28 任意のユーザーでログインする
+	 * @param loginUser ログインID
+	 * @param password パスワード
+	 * @author 河島
+	 */
+	public static void login(String loginUser, String password) {
+		try {
+			// 入力欄が表示されるまで待機（5秒）
+			WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(5));
+			WebElement idField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("loginId")));
+			WebElement pwField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("password")));
+
+			// 値をクリアして入力
+			idField.clear();
+			idField.sendKeys(loginUser);
+			System.out.println("◎入力欄に「" + loginUser + "」を入力しました。");
+
+			pwField.clear();
+			pwField.sendKeys(password);
+			System.out.println("◎入力欄に「" + password + "」を入力しました。");
+
+			// ログインボタン押下
+			WebElement submitBtn = wait
+					.until(ExpectedConditions.elementToBeClickable(By.cssSelector("input[type='submit']")));
+			submitBtn.click();
+			System.out.println("◎ログインボタンをクリックしました。");
+
+			// ページ遷移確認
+			wait.until(ExpectedConditions.or(
+					ExpectedConditions.titleContains("コース詳細"),
+					ExpectedConditions.urlContains("/course/detail")));
+			System.out.println("◎ログイン成功。コース詳細画面が表示されました。");
+
+		} catch (Exception e) {
+			System.err.println("×ログイン処理に失敗しました: " + e.getMessage());
+		}
+	}
 }

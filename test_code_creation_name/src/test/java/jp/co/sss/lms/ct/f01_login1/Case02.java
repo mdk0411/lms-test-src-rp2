@@ -66,9 +66,7 @@ public class Case02 {
 		// TODO ここに追加
 
 		// ケース02 - No.03 DBに登録されていないユーザを入力し、「ログイン」ボタン押下。
-		webDriver.findElement(By.id("loginId")).sendKeys("NotStudentAA01");
-		webDriver.findElement(By.id("password")).sendKeys("StudentAA011");
-		webDriver.findElement(By.cssSelector("input[type='submit']")).click();
+		login("NotStudentAA01", "StudentAA011");
 
 		// ケース02 - No.04 エラーメッセージの表示確認
 		WebElement error = webDriver.findElement(By.cssSelector("span.help-inline.error"));
