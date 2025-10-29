@@ -10,7 +10,6 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.openqa.selenium.By;
 
 /**
  * 結合テスト ログイン機能①
@@ -38,19 +37,9 @@ public class Case03 {
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
 		// TODO ここに追加
+
 		// ケース03 - No.01 トップページにアクセス
-		goTo("http://localhost:8080/lms/");
-
-		// ケース01 - No.02 画面タイトル確認
-		assertEquals("ログイン | LMS", webDriver.getTitle(),
-				"タイトルが正しく表示されていることを確認する。");
-
-		assertTrue(isElementPresentById("loginId"),
-				"ログインID入力欄が表示されていることを確認する。");
-		assertTrue(isElementPresentById("password"),
-				"パスワード入力欄が表示されていることを確認する。");
-		assertTrue(isElementPresentByCssSelector("input[type='submit']"),
-				"ログインボタンが表示されていることを確認する。");
+		checkTopPage();
 
 		getEvidence(new Object() {
 		}, "ケース03_受講生_ログイン_正常系_初期画面");
@@ -63,11 +52,10 @@ public class Case03 {
 		// TODO ここに追加
 
 		// ケース03 - No.03 初回ログイン済みの受講生ユーザを入力し、「ログイン」ボタン押下。
-		webDriver.findElement(By.id("loginId")).sendKeys("StudentAA01");
-		webDriver.findElement(By.id("password")).sendKeys("StudentAA011");
-		webDriver.findElement(By.cssSelector("input[type='submit']")).click();
+		login("StudentAA01", "StudentAA011");
 
 		// ケース03 - No.04 画面タイトル確認
+		waitForTitle("コース詳細 | LMS", 10);
 		assertTrue(isTitle("コース詳細 | LMS"),
 				"タイトルが正しく表示されていることを確認する。");
 

@@ -1,7 +1,12 @@
 package jp.co.sss.lms.ct.util;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 import java.time.Duration;
 
 import org.openqa.selenium.By;
@@ -13,6 +18,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.google.common.io.Files;
@@ -227,7 +233,7 @@ public class WebDriverUtils {
 				System.out.println("△別タブが存在しないため、close処理はスキップしました。");
 			}
 		} catch (Exception e) {
-			System.err.println("×ウィンドウ切り替え中にエラー: " + e.getMessage());
+			System.err.println("×ウィンドウ切り替え中にエラー発生しました。：" + e.getMessage());
 		}
 	}
 
@@ -329,7 +335,7 @@ public class WebDriverUtils {
 		WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(seconds));
 		WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
 		element.click();
-		System.out.println("◎要素をクリックしました: " + locator.toString());
+		System.out.println("◎要素をクリックしました：" + locator.toString());
 	}
 
 	/**
@@ -392,7 +398,7 @@ public class WebDriverUtils {
 
 			System.out.println("◎「" + keyword + "」の詳細ボタンをクリックしました。");
 		} catch (Exception e) {
-			System.err.println("×「" + keyword + "」の詳細ボタンクリックに失敗しました: " + e.getMessage());
+			System.err.println("×「" + keyword + "」の詳細ボタンクリックに失敗しました：" + e.getMessage());
 		}
 	}
 
@@ -417,7 +423,7 @@ public class WebDriverUtils {
 
 			System.out.println("◎レポート登録画面に遷移しました。");
 		} catch (Exception e) {
-			System.err.println("×レポート登録画面への遷移に失敗しました: " + e.getMessage());
+			System.err.println("×レポート登録画面への遷移に失敗しました：" + e.getMessage());
 		}
 	}
 
@@ -452,7 +458,7 @@ public class WebDriverUtils {
 			Thread.sleep(500);
 
 		} catch (Exception e) {
-			System.err.println("×テキスト入力に失敗しました: " + e.getMessage());
+			System.err.println("×テキスト入力に失敗しました：" + e.getMessage());
 		}
 	}
 
@@ -472,6 +478,7 @@ public class WebDriverUtils {
 
 	/**
 	 * ⑲10/28 JSでクリックを強制実行する
+	 * 
 	 * @param locator 要素の特定子
 	 * @author 河島
 	 */
@@ -481,14 +488,15 @@ public class WebDriverUtils {
 			((JavascriptExecutor) webDriver).executeScript("arguments[0].click();", element);
 			System.out.println("◎JSでクリックしました: " + locator.toString());
 		} catch (Exception e) {
-			System.err.println("×JSクリックに失敗しました: " + e.getMessage());
+			System.err.println("×JSクリックに失敗しました：" + e.getMessage());
 		}
 	}
 
 	/**
 	 * ⑳10/28 
-	 * JSで
-	強制的にユーザー詳細へ遷移する
+	 * JSで強制的にユーザー詳細へ遷移する
+	 * 
+	 * @author 河島
 	 */
 	public static void clickWelcomeGoToUserDetail() {
 		try {
@@ -502,12 +510,13 @@ public class WebDriverUtils {
 			System.out.println("◎ユーザー詳細画面に遷移しました。");
 
 		} catch (Exception e) {
-			System.err.println("×ユーザー詳細への強制遷移に失敗しました: " + e.getMessage());
+			System.err.println("×ユーザー詳細への強制遷移に失敗しました：" + e.getMessage());
 		}
 	}
 
 	/**
 	 * ㉑ 10/28 任意のユーザーでログインする
+	 * 
 	 * @param loginUser ログインID
 	 * @param password パスワード
 	 * @author 河島
@@ -541,7 +550,144 @@ public class WebDriverUtils {
 			System.out.println("◎ログイン成功。コース詳細画面が表示されました。");
 
 		} catch (Exception e) {
-			System.err.println("×ログイン処理に失敗しました: " + e.getMessage());
+			System.err.println("×ログイン処理に失敗しました：" + e.getMessage());
 		}
+	}
+
+	/**
+	 * ㉒10/29 HTTPエラーが発生してないことの確認（Case01用）
+	 * 
+	 * @param urlString チェックしたいページのURL
+	 */
+	public static void checkHttpStatus(String urlString) {
+		HttpURLConnection connection = null;
+		try {
+			URL url = URI.create(urlString).toURL();
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestMethod("HEAD");
+			connection.connect();
+
+			int code = connection.getResponseCode();
+			if (code >= 400) {
+				System.out.println("×HTTPエラー発生：" + code + " (" + urlString + ")");
+			} else {
+				System.out.println("◎HTTP正常応答：" + code + " (" + urlString + ")");
+			}
+			connection.disconnect();
+		} catch (Exception e) {
+			System.out.println("×HTTPチェック中に例外発生：" + e.getMessage());
+		} finally {
+			if (connection != null)
+				connection.disconnect();
+		}
+	}
+
+	/**
+	 * ㉓10/29 トップページアクセス用
+	 * 
+	 * @author 河島
+	 */
+	public static void checkTopPage() {
+		// ケース01 - No.01 トップページにアクセス
+		goTo("http://localhost:8080/lms/");
+
+		// ケース01 - No.02 画面タイトル確認
+		waitForTitle("ログイン | LMS", 5);
+		assertEquals("ログイン | LMS", webDriver.getTitle(),
+				"ログイン画面が正しく表示されていることを確認する。");
+
+		// ケース01 - No.03 ログインフォームの要素を確認
+		assertTrue(isElementPresentById("loginId"),
+				"ログインID入力欄が表示されていることを確認する。");
+		assertTrue(isElementPresentById("password"),
+				"パスワード入力欄が表示されていることを確認する。");
+		assertTrue(isElementPresentByCssSelector("input[type='submit']"),
+				"ログインボタンが表示されていることを確認する。");
+
+		// ケース01 - No.04 HTTPエラー（404,500など）が発生していないことを確認する。
+		checkHttpStatus("http://localhost:8080/lms/");
+	}
+
+	/**
+	 * ㉔10/29 コース詳細アクセスチェック用
+	 * 
+	 * @author 河島
+	 */
+	public static void checkCourseDetail() {
+		waitForTitle("コース詳細 | LMS", 10);
+		assertTrue(isTitle("コース詳細 | LMS"),
+				"タイトルが正しく表示されていることを確認する。");
+		assertTrue(isUrlEndsWith("/course/detail"),
+				"コース詳細URLを確認する");
+	}
+
+	/*-----------------------------------------------------------------------
+	 * 以下、バリデーションチェック用
+	 * ---------------------------------------------------------------------*/
+
+	public static void clearText(By locator) {
+		WebElement element = webDriver.findElement(locator);
+		element.clear();
+	}
+
+	public static void selectByVisibleText(By locator, String visibleText) {
+		Select select = new Select(webDriver.findElement(locator));
+		select.selectByVisibleText(visibleText);
+	}
+
+	public static void checkLearningTopicValid() {
+		// 学習項目未入力パターン
+		clearText(By.id("intFieldName_0"));
+		selectByVisibleText(By.id("intFieldValue_0"), "3"); // 理解度だけ選択
+		clickJs(By.cssSelector("button.btn.btn-primary"));
+	}
+
+	public static void checkCompreValid() {
+		// 理解度未入力パターン
+		typeTextJs(By.id("intFieldName_0"), "Spring Boot", 10);
+		selectByVisibleText(By.id("intFieldValue_0"), ""); // 理解度を未選択に戻す
+		clickJs(By.cssSelector("button.btn.btn-primary"));
+	}
+
+	/**
+	 * 目標の達成度が数値以外入力された場合のバリデーション確認
+	 */
+	public static void checkGoalNotNumericValid() {
+		// 数値入力欄（目標の達成度）に文字を入力
+		typeTextJs(By.id("content_0"), "abc", 10); // 数値欄に文字列を入力
+		clickJs(By.cssSelector("button.btn.btn-primary")); // 提出ボタン押下
+		waitForTitle("レポート登録 | LMS", 10);
+	}
+
+	/**
+	 * 目標の達成度が範囲外入力された場合のバリデーション確認
+	 */
+	public static void checkGoalOutOfRangeValid() {
+		typeTextJs(By.id("content_0"), "15", 10); // 許容範囲(1～10)外の値を入力
+		clickJs(By.cssSelector("button.btn.btn-primary"));
+		waitForTitle("レポート登録 | LMS", 10);
+	}
+
+	/**
+	 * 目標の達成度・所感が未入力の場合のバリデーション確認
+	 */
+	public static void checkGoalAndCommentEmptyValid() {
+		clearText(By.id("content_0")); // 目標の達成度をクリア
+		clearText(By.id("content_1")); // 所感をクリア
+		clickJs(By.cssSelector("button.btn.btn-primary"));
+
+		waitForTitle("レポート登録 | LMS", 10);
+	}
+
+	/**
+	 * 所感・一週間の振り返りが2000文字を超える場合のバリデーション確認
+	 */
+	public static void checkOver2000CharsValid() {
+		String over2000 = "A".repeat(2001);
+
+		typeTextJs(By.id("content_1"), over2000, 10); // 所感欄
+		clickJs(By.cssSelector("button.btn.btn-primary"));
+
+		waitForTitle("レポート登録 | LMS", 10);
 	}
 }

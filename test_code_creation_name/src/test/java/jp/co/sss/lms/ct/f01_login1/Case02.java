@@ -43,18 +43,11 @@ public class Case02 {
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
 		// TODO ここに追加
-		goTo("http://localhost:8080/lms/");
 
-		assertEquals("ログイン | LMS", webDriver.getTitle(),
-				"ログイン画面が正しく表示されていることを確認する。");
+		// ケース01 - No.01 トップページにアクセス
+		checkTopPage();
 
-		assertTrue(isElementPresentById("loginId"),
-				"ログインID入力欄が表示されていることを確認する。");
-		assertTrue(isElementPresentById("password"),
-				"パスワード入力欄が表示されていることを確認する。");
-		assertTrue(isElementPresentByCssSelector("input[type='submit']"),
-				"ログインボタンが表示されていることを確認する。");
-
+		// エビデンス取得
 		getEvidence(new Object() {
 		}, "ケース02_受講生_ログイン_初期画面");
 	}

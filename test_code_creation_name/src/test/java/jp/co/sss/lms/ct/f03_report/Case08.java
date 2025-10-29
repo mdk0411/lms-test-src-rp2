@@ -3,8 +3,6 @@ package jp.co.sss.lms.ct.f03_report;
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +11,6 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 /**
  * 結合テスト レポート機能
@@ -43,11 +40,7 @@ public class Case08 {
 		// TODO ここに追加
 
 		// ケース08 - No.01 トップページにアクセス
-		goTo("http://localhost:8080/lms/");
-		assertTrue(isTitle("ログイン | LMS"));
-		assertTrue(isElementPresentById("loginId"));
-		assertTrue(isElementPresentById("password"));
-		assertTrue(isElementPresentByCssSelector("input[type='submit']"));
+		checkTopPage();
 	}
 
 	@Test
@@ -58,9 +51,7 @@ public class Case08 {
 
 		// ケース08 - No.02 初回ログイン済みの受講生ユーザーでログイン
 		login("StudentAA01", "StudentAA011");
-
-		waitForTitle("コース詳細 | LMS", 10);
-
+		checkCourseDetail();
 	}
 
 	@Test
@@ -73,6 +64,8 @@ public class Case08 {
 		// ここでは「2022年10月2日(日)」行の「詳細」ボタンをクリックしている。
 		clickJs(By.xpath("//tr[td[contains(text(),'2022年10月2日(日)')]]//input[@value='詳細']"));
 
+		waitForTitle("セクション詳細 | LMS", 10);
+		assertTrue(isTitle("セクション詳細 | LMS"));
 		assertTrue(isUrlEndsWith("/section/detail"));
 
 		// エビデンス取得
@@ -92,6 +85,7 @@ public class Case08 {
 
 		// レポート登録画面に遷移したことを確認
 		waitForTitle("レポート登録 | LMS", 10);
+		assertTrue(isTitle("レポート登録 | LMS"));
 		assertTrue(isUrlEndsWith("/report/regist"));
 
 		// エビデンス取得
@@ -111,7 +105,7 @@ public class Case08 {
 
 		// エビデンス取得
 		getEvidence(new Object() {
-		}, "ケース08_受講生レポート修正(週報)_正常系_内容修正");
+		}, "ケース08_受講生レポート修正(週報)_正常系_報告内容の修正");
 
 		// 「提出する」ボタンをクリック
 		clickJs(By.cssSelector("button.btn.btn-primary"));
@@ -126,21 +120,17 @@ public class Case08 {
 
 		// ケース08 - No.06 上部メニューの「ようこそ○○さん」リンクを押下
 		clickWelcomeGoToUserDetail();
-		List<WebElement> list = webDriver.findElements(By.xpath("//a[contains(@href,'/user/detail')]"));
-		System.out.println("要素数: " + list.size());
-		for (WebElement e : list) {
-			System.out.println("▶ text=" + e.getText());
-			System.out.println("▶ href=" + e.getAttribute("href"));
-		}
 
 		// タイトル確認
 		waitForTitle("ユーザー詳細", 10);
+		assertTrue(isTitle("ユーザー詳細"));
+
 		// URL確認
 		assertTrue(isUrlEndsWith("/user/detail"));
 
 		// エビデンス取得
 		getEvidence(new Object() {
-		}, "ケース08_ケース08_受講生レポート修正(週報)_正常系__ユーザー詳細画面");
+		}, "ケース08_ケース08_受講生レポート修正(週報)_正常系_ユーザー詳細画面");
 	}
 
 	@Test
@@ -155,12 +145,13 @@ public class Case08 {
 		// タイトルとURL確認
 		waitForTitle("レポート詳細 | LMS", 10);
 		assertTrue(isTitle("レポート詳細 | LMS"));
+		assertTrue(isUrlEndsWith("/report/detail"));
 
 		// ケース08 - No.08 修正内容の確認
 		assertTrue(isTextPresent("修正しました。"));
 
 		// エビデンス取得
 		getEvidence(new Object() {
-		}, "ケース08_週報修正_修正内容反映確認");
+		}, "ケース08_受講生レポート修正(週報)_正常系_修正内容が反映されている");
 	}
 }

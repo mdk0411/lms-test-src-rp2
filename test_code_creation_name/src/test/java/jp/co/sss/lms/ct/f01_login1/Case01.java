@@ -42,6 +42,7 @@ public class Case01 {
 		goTo("http://localhost:8080/lms/");
 
 		// ケース01 - No.02 画面タイトル確認
+		waitForTitle("ログイン | LMS", 5);
 		assertEquals("ログイン | LMS", webDriver.getTitle(),
 				"ログイン画面が正しく表示されていることを確認する。");
 
@@ -54,8 +55,9 @@ public class Case01 {
 				"ログインボタンが表示されていることを確認する。");
 
 		// ケース01 - No.04 HTTPエラー（404,500など）が発生していないことを確認する。
+		checkHttpStatus("http://localhost:8080/lms/");
 
-		// エビデンスを取得
+		// エビデンス取得
 		getEvidence(new Object() {
 		}, "ケース01_ログイン画面への遷移");
 

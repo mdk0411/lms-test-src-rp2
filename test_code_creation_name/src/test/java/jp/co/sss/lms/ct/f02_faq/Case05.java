@@ -40,11 +40,7 @@ public class Case05 {
 		// TODO ここに追加
 
 		// ケース05 - No.01 トップページにアクセス
-		goTo("http://localhost:8080/lms/");
-		assertTrue(isTitle("ログイン | LMS"));
-		assertTrue(isElementPresentById("loginId"));
-		assertTrue(isElementPresentById("password"));
-		assertTrue(isElementPresentByCssSelector("input[type='submit']"));
+		checkTopPage();
 	}
 
 	@Test
@@ -53,12 +49,9 @@ public class Case05 {
 	void test02() {
 		// TODO ここに追加
 
-		// ケース05 - No.02 コース詳細画面への遷移（ログイン）
-		typeText(By.id("loginId"), "StudentAA01", 10);
-		typeText(By.id("password"), "StudentAA011", 5);
-		clickElement(By.cssSelector("input[type='submit']"), 5);
-		waitForTitle("コース詳細 | LMS", 10);
-		assertTrue(isTitle("コース詳細 | LMS"));
+		// ケース05 - No.02 初回ログイン済みの受講生ユーザーでログイン
+		login("StudentAA01", "StudentAA011");
+		checkCourseDetail();
 	}
 
 	@Test
@@ -69,6 +62,7 @@ public class Case05 {
 
 		// ケース05 - No.03「機能」のプルダウンを開き、「ヘルプ」のリンクを押下する。
 		clickDropDownLink("機能", "ヘルプ");
+		waitForTitle("ヘルプ | LMS", 10);
 		assertTrue(isTitle("ヘルプ | LMS"));
 		assertTrue(isUrlEndsWith("/help"));
 	}
@@ -88,6 +82,7 @@ public class Case05 {
 		String newWindow = switchToNewWindow();
 
 		// ケース05 - No.06 タイトル確認
+		waitForTitle("よくある質問 | LMS", 10);
 		assertTrue(isTitle("よくある質問 | LMS"));
 
 		// ケース05 - No.07 URL確認
@@ -125,7 +120,7 @@ public class Case05 {
 		assertEquals("申し込み", getInputValue(By.name("keyword")));
 
 		// ケース05 - No.09 検索実行
-		clickElement(By.cssSelector("input[type='submit']"), 5);
+		clickElement(By.cssSelector("input[type='submit']"), 10);
 		assertTrue(isTextPresent("申し込み"), "検索結果に「申し込み」を含む質問が表示されること");
 
 		// エビデンス取得

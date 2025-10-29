@@ -10,7 +10,6 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.openqa.selenium.By;
 
 /**
  * 結合テスト よくある質問機能
@@ -40,12 +39,7 @@ public class Case04 {
 		// TODO ここに追加
 
 		// ケース04 - No.01 トップページにアクセス
-		goTo("http://localhost:8080/lms/");
-
-		assertTrue(isTitle("ログイン | LMS"));
-		assertTrue(isElementPresentById("loginId"));
-		assertTrue(isElementPresentById("password"));
-		assertTrue(isElementPresentByCssSelector("input[type='submit']"));
+		checkTopPage();
 
 		getEvidence(new Object() {
 		}, "ケース04_よくある質問への遷移_初期画面");
@@ -57,12 +51,10 @@ public class Case04 {
 	void test02() {
 		// TODO ここに追加
 
-		// ケース04 - No.02 コース詳細画面への遷移（ログイン）
-		webDriver.findElement(By.id("loginId")).sendKeys("StudentAA01");
-		webDriver.findElement(By.id("password")).sendKeys("StudentAA011");
-		webDriver.findElement(By.cssSelector("input[type='submit']")).click();
+		// ケース04 - No.02 初回ログイン済みの受講生ユーザーでログイン
+		login("StudentAA01", "StudentAA011");
+		checkCourseDetail();
 
-		assertTrue(isTitle("コース詳細 | LMS"));
 		getEvidence(new Object() {
 		}, "ケース04_よくある質問への遷移_コース詳細画面");
 
@@ -78,6 +70,7 @@ public class Case04 {
 		clickDropDownLink("機能", "ヘルプ");
 
 		// ケース04 - No.04 タイトル確認
+		waitForTitle("ヘルプ | LMS", 10);
 		assertTrue(isTitle("ヘルプ | LMS"));
 
 		// ケース04 - No.05 URL確認
@@ -105,6 +98,7 @@ public class Case04 {
 		String newWindow = switchToNewWindow();
 
 		// ケース04 - No.08 タイトル確認
+		waitForTitle("よくある質問 | LMS", 10);
 		assertTrue(isTitle("よくある質問 | LMS"));
 
 		// ケース04 - No.09 URL確認

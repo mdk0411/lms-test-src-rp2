@@ -40,12 +40,7 @@ public class Case07 {
 		// TODO ここに追加
 
 		// ケース07 - No.01 トップページにアクセス
-		goTo("http://localhost:8080/lms/");
-
-		assertTrue(isTitle("ログイン | LMS"));
-		assertTrue(isElementPresentById("loginId"));
-		assertTrue(isElementPresentById("password"));
-		assertTrue(isElementPresentByCssSelector("input[type='submit']"));
+		checkTopPage();
 
 		// エビデンス取得
 		getEvidence(new Object() {
@@ -58,10 +53,9 @@ public class Case07 {
 	void test02() {
 		// TODO ここに追加
 
-		// ケース07 - No.02 ログイン
+		// ケース07 - No.02 初回ログイン済みの受講生ユーザーでログイン
 		login("StudentAA01", "StudentAA011");
-
-		assertTrue(isTitle("コース詳細 | LMS"));
+		checkCourseDetail();
 
 		// エビデンス取得
 		getEvidence(new Object() {
@@ -74,12 +68,11 @@ public class Case07 {
 	void test03() {
 		// TODO ここに追加
 
-		waitForTitle("コース詳細 | LMS", 5);
-
 		// ケース07 - No.03 「未提出」ステータスの「詳細」ボタンをクリック
 		clickDetail("未提出");
 
 		// ケース07 - No.04 タイトル確認
+		waitForTitle("セクション詳細 | LMS", 10);
 		assertTrue(isTitle("セクション詳細 | LMS"));
 
 		// ケース07 - No.05 URL確認
@@ -100,6 +93,7 @@ public class Case07 {
 		goToReport();
 
 		// ケース07 - No.07 タイトル確認
+		waitForTitle("レポート登録 | LMS", 10);
 		assertTrue(isTitle("レポート登録 | LMS"));
 
 		// ケース07 - No.08 URL確認
@@ -128,6 +122,7 @@ public class Case07 {
 
 		// ケース07 - No.10 タイトル確認
 		waitForTitle("セクション詳細 | LMS", 10);
+		assertTrue(isTitle("セクション詳細 | LMS"));
 
 		// ケース07 - No.10 URL確認
 		waitForUrlContaints("/section/detail", 10);
